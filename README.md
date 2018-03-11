@@ -1,2 +1,2 @@
 # snake
-Javascript Snake Game
+A basic Javascript Snake Game created using p5.js
