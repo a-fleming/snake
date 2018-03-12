@@ -13,8 +13,11 @@ var clock;
 var clock_int;
 
 var open_spaces;
+var game_started;
 
 function setup() {
+  noLoop();
+  game_started = false;
   canvas = createCanvas(200, 200);
   scl = 20;
   rows = height / scl;
@@ -27,16 +30,13 @@ function setup() {
       open_spaces[i][j] = true;
     }
   }
-
-  s = new Snake();
-  f = new Food();
   frameRate(10);
   score_display = document.getElementById("score_display");
   power_up_display = document.getElementById("power_up_display");
-  reset_button = createButton('Play Again');
+  reset_button = createButton('Start');
   reset_button.position(width/2 - 30, height/2 + 20);
   reset_button.mousePressed(reset);
-  reset_button.hide();
+
 
   createDiv('');
   createDiv('Width');
@@ -51,26 +51,29 @@ function setup() {
 }
 
 function draw() {
-  clock++;
   background(51);
-  s.update();
-  if(s.is_dead()) {
-    noLoop();
-    reset_button.show();
-  }
-  else {
-    s.show();
-    if(s.is_on(f)) {
-      s.eat(f);
-      f.reset();
-    }
-    f.show();
-    score_display.innerHTML = s.length;
-    if(s.power_up_timer > clock) {
-      power_up_display.innerHTML = s.power_up_timer - clock;
+  if(game_started) {
+    clock++;
+    s.update();
+    if(s.is_dead()) {
+      game_started = false;
+      noLoop();
+      reset_button.show();
     }
     else {
-      power_up_display.innerHTML = 0;
+      s.show();
+      if(s.is_on(f)) {
+        s.eat(f);
+        f.reset();
+      }
+      f.show();
+      score_display.innerHTML = s.length;
+      if(s.power_up_timer > clock) {
+        power_up_display.innerHTML = s.power_up_timer - clock;
+      }
+      else {
+        power_up_display.innerHTML = 0;
+      }
     }
   }
 }
@@ -120,5 +123,7 @@ function reset() {
   s = new Snake();
   f = new Food();
   reset_button.hide();
+  reset_button.html('Play Again');
   loop();
+  game_started = true;
 }
